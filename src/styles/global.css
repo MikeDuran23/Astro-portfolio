@@ -470,3 +470,10 @@ html.theme-switching::view-transition-new(root) {
   border-left-width: 3px;
   font-style: normal;
 }
+
+.prose-site img {
+	border-radius: 14px;
+	border: 1px solid var(--line, rgba(128, 128, 128, 0.25));
+	width: 100%;
+	height: auto;
+}
