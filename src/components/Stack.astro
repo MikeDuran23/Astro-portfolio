@@ -1,0 +1,53 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="mx-auto max-w-6xl px-6 py-24 md:py-32" aria-labelledby="stack-title">
+	<h2 id="stack-title" class="display-md max-w-xl">What I build with</h2>
+	<p class="mt-4 max-w-xl text-soft">The tools I use in my projects, from backend to interface.</p>
+
+	<div class="stack mt-14 grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+		{
+			site.stack.map((group) => (
+				<div class="stack__group">
+					<h3 class="text-sm font-medium text-muted">{group.title}</h3>
+					<ul class="mt-4 space-y-2">
+						{group.items.map((item) => (
+							<li class="stack__item">{item}</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.stack__group {
+		transition: opacity 0.5s var(--ease);
+	}
+
+	.stack__item {
+		width: fit-content;
+		font-family: var(--f-display);
+		font-size: 1.5rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--fg);
+		transition:
+			transform 0.5s var(--ease),
+			color 0.3s;
+	}
+
+	@media (hover: hover) {
+		/* Hovering a group dims the others */
+		.stack:has(.stack__group:hover) .stack__group:not(:hover) {
+			opacity: 0.35;
+		}
+
+		.stack__item:hover {
+			transform: translateX(8px);
+			color: var(--accent);
+		}
+	}
+</style>

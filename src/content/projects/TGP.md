@@ -2,6 +2,7 @@
 title: "The Gamer's Place"
 description: "A full-stack web application built as my Bachelor's Thesis. It helps users keep track of the games they have played, discover new titles through a personalized recommendation system, and manage their personal gaming library."
 date: "2026-07-03"
+cover: "/home.mp4"
 technologies:
   - Vue.js
   - Java
@@ -55,7 +56,7 @@ This project was born from the conviction that **gamers deserve better tools to 
 ## Feature Tour
 
 ### Registration & Login
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/auth.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -65,7 +66,7 @@ Secure authentication system built with Spring Security and JWT tokens. Create a
 ---
 
 ### Home Page
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/home.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -75,7 +76,7 @@ Your entry point to the platform. See the latest releases, top-rated games, feat
 ---
 
 ### Game Catalog with Advanced Filtering
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/catalog.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -91,7 +92,7 @@ The interface is built for speed and intuitive exploration—no endless scrollin
 ---
 
 ### Game Details & Library Management
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/details.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -113,7 +114,7 @@ From here you can:
 ---
 
 ### Game Comparator
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/compare.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -128,7 +129,7 @@ This is one of the platform's most unique features—most gaming sites don't off
 ---
 
 ### User Profile & Lists
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/profile.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>
@@ -145,7 +146,7 @@ Edit your profile, customize list visibility, and manage your gaming identity.
 ---
 
 ### Personalized Recommendation System
-<video width="100%" height="auto" controls style="border-radius: 8px; margin: 1rem 0;">
+<video controls preload="metadata" playsinline>
   <source src="/recom.mp4" type="video/mp4" controls muted>
   Your browser doesn't support HTML5 video.
 </video>

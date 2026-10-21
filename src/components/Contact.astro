@@ -1,0 +1,74 @@
+---
+import { site } from '../data/site';
+
+const hasEmail = site.email.length > 0;
+---
+
+<section class="mx-auto max-w-6xl px-6 pb-28 pt-8" aria-labelledby="contact-title">
+	<div class="contact" data-spotlight>
+		<h2 id="contact-title" class="display-lg max-w-2xl">Open to new opportunities.</h2>
+		<p class="lead mt-5">
+			If you like my work or want to collaborate, you can browse my code on GitHub{hasEmail ? ' or write to me directly' : ''}.
+		</p>
+
+		<div class="mt-8 flex flex-wrap gap-3">
+			{
+				hasEmail && (
+					<a href={`mailto:${site.email}`} class="btn btn-primary">
+						Get in touch
+						<svg class="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M5 12h14M13 6l6 6-6 6"></path>
+						</svg>
+					</a>
+				)
+			}
+			<a href={site.github} class:list={['btn', hasEmail ? 'btn-ghost' : 'btn-primary']} target="_blank" rel="noopener noreferrer">
+				GitHub
+				<svg class="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M5 12h14M13 6l6 6-6 6"></path>
+				</svg>
+			</a>
+			{
+				site.linkedin && (
+					<a href={site.linkedin} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+						LinkedIn
+					</a>
+				)
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.contact {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+		padding: clamp(2rem, 6vw, 4.5rem);
+		border-radius: 2rem;
+		border: 1px solid var(--line);
+		background:
+			radial-gradient(90% 120% at 0% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%),
+			radial-gradient(80% 120% at 100% 100%, color-mix(in oklab, var(--accent-2) 12%, transparent), transparent 60%),
+			color-mix(in oklab, var(--surface) 70%, transparent);
+	}
+
+	.contact::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.5s;
+		background: radial-gradient(
+			480px circle at var(--mx, 50%) var(--my, 50%),
+			color-mix(in oklab, var(--accent) 14%, transparent),
+			transparent 60%
+		);
+	}
+
+	.contact:hover::before {
+		opacity: 1;
+	}
+</style>

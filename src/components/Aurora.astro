@@ -1,0 +1,111 @@
+---
+// Fixed ambient background. It persists across pages (transition:persist) so the
+// cursor-following light doesn't reset when navigating.
+---
+
+<div class="aurora" aria-hidden="true" transition:persist="aurora">
+	<div class="blob blob--a"></div>
+	<div class="blob blob--b"></div>
+	<div class="blob blob--c"></div>
+	<div class="cursor" data-aurora-cursor></div>
+</div>
+
+<script>
+	const cursor = document.querySelector<HTMLElement>('[data-aurora-cursor]');
+	const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (cursor && finePointer && !reduceMotion) {
+		let targetX = window.innerWidth * 0.62;
+		let targetY = window.innerHeight * 0.32;
+		let x = targetX;
+		let y = targetY;
+
+		window.addEventListener(
+			'pointermove',
+			(event) => {
+				targetX = event.clientX;
+				targetY = event.clientY;
+			},
+			{ passive: true },
+		);
+
+		const tick = () => {
+			x += (targetX - x) * 0.08;
+			y += (targetY - y) * 0.08;
+			cursor.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`;
+			requestAnimationFrame(tick);
+		};
+		tick();
+	}
+</script>
+
+<style>
+	.aurora {
+		position: fixed;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+		pointer-events: none;
+		contain: strict;
+	}
+
+	.blob {
+		position: absolute;
+		width: 70vmax;
+		height: 70vmax;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, var(--c), transparent 70%);
+		will-change: transform;
+		animation: drift 28s ease-in-out infinite alternate;
+	}
+
+	.blob--a {
+		--c: var(--glow-a);
+		top: -28vmax;
+		left: -18vmax;
+	}
+
+	.blob--b {
+		--c: var(--glow-b);
+		top: 8vmax;
+		right: -24vmax;
+		animation-duration: 36s;
+		animation-delay: -8s;
+	}
+
+	.blob--c {
+		--c: var(--glow-c);
+		bottom: -34vmax;
+		left: 18vmax;
+		animation-duration: 44s;
+		animation-delay: -16s;
+	}
+
+	.cursor {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 34rem;
+		height: 34rem;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, var(--glow-cursor), transparent);
+		transform: translate3d(62vw, 32vh, 0) translate(-50%, -50%);
+		will-change: transform;
+	}
+
+	@keyframes drift {
+		from {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		to {
+			transform: translate3d(6vmax, 4vmax, 0) scale(1.15);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.blob {
+			animation: none;
+		}
+	}
+</style>

@@ -1,260 +1,175 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, getEntryBySlug } from 'astro:content';
+import { site } from '../../data/site';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((p) => ({ params: { slug: p.slug } }));
+	const projects = await getCollection('projects', ({ data }) => !data.draft);
+	return projects.map((project) => ({ params: { slug: project.slug } }));
 }
 
 const { slug } = Astro.params;
-const entry = await getEntryBySlug('projects', slug);
+const entry = await getEntryBySlug('projects', slug as string);
 
 if (!entry) {
-  throw new Error(`Project not found: ${slug}`);
+	throw new Error(`Project not found: ${slug}`);
 }
 
-// Render the markdown body to a component
-const rendered = await entry.render();
+const { Content, headings } = await entry.render();
+const { title, description, technologies = [], github, date } = entry.data;
+const toc = headings.filter((heading) => heading.depth === 2);
+const formattedDate = date
+	? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+	: null;
 ---
 
-<Layout>
-  <article class="container mx-auto py-12 px-4 relative z-10">
-    <!-- Hero Section -->
-      <div class="mb-16 pb-8 border-b border-cyan-500/20">
-      <a href="/projects" class="inline-flex items-center gap-2 text-cyan-200 hover:text-cyan-100 mb-6 text-sm font-medium">
-        <span>←</span>
-        <span>VOLVER A PROYECTOS</span>
-      </a>
+<Layout title={`${title} — ${site.name}`} description={description}>
+	<div class="progress" data-progress aria-hidden="true"></div>
 
-      <h1 class="text-5xl md:text-6xl font-black mb-4 leading-tight text-slate-100">
-        {entry.data.title}
-      </h1>
-      <p class="text-xl text-slate-400 max-w-3xl leading-relaxed mb-6">
-        {entry.data.description}
-      </p>
+	<article class="mx-auto max-w-6xl px-6 pb-28 pt-32">
+		<a href="/projects" class="back group">
+			<svg class="back__icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M19 12H5M11 6l-6 6 6 6"></path>
+			</svg>
+			Projects
+		</a>
 
-      {entry.data.technologies && (
-        <div class="flex flex-wrap gap-2 mb-6">
-          {entry.data.technologies.map(tech => (
-            <span class="cyber-project-badge">
-              {tech}
-            </span>
-          ))}
-        </div>
-      )}
+		<header class="mt-10 max-w-4xl">
+			<h1 class="display-lg rise">{title}</h1>
+			<p class="lead rise mt-6" style="--d: 120ms">{description}</p>
 
-      <div class="flex flex-wrap items-center gap-3 text-sm">
-        {entry.data.github && (
-          <a href={entry.data.github} target="_blank" rel="noopener noreferrer" class="cyber-project-btn">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.868-.013-1.703-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.545 2.914 1.209.092-.937.349-1.546.635-1.901-2.22-.252-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0110 4.817c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.137 18.167 20 14.42 20 10c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path>
-            </svg>
-            CÓDIGO EN GITHUB
-          </a>
-        )}
-        {entry.data.date && (
-          <span class="text-slate-500 py-2 flex items-center gap-2 text-sm">
-            📅 {new Date(entry.data.date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </span>
-        )}
-      </div>
-    </div>
+			{
+				technologies.length > 0 && (
+					<ul class="rise mt-8 flex flex-wrap gap-2" style="--d: 220ms" aria-label="Technologies">
+						{technologies.map((tech) => (
+							<li class="chip">{tech}</li>
+						))}
+					</ul>
+				)
+			}
 
-    <!-- Content -->
-      <div class="prose prose-lg max-w-4xl mx-auto prose-headings:font-bold prose-a:text-cyan-200 hover:prose-a:text-cyan-100">
-      <rendered.Content />
-    </div>
-  </article>
+			<div class="rise mt-8 flex flex-wrap items-center gap-x-6 gap-y-4" style="--d: 320ms">
+				{
+					github && (
+						<a href={github} class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+							<svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+								<path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.868-.013-1.703-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.545 2.914 1.209.092-.937.349-1.546.635-1.901-2.22-.252-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0110 4.817c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.137 18.167 20 14.42 20 10c0-5.523-4.477-10-10-10z" clip-rule="evenodd" />
+							</svg>
+							View code
+						</a>
+					)
+				}
+				{formattedDate && <time class="text-sm text-muted" datetime={date}>{formattedDate}</time>}
+			</div>
+		</header>
 
-  <style is:global>
-    .prose {
-      --tw-prose-body: #d0d0d0;
-      --tw-prose-headings: #c7d2fe;
-      --tw-prose-lead: #a0a0a0;
-      --tw-prose-links: #9ddff0;
-      --tw-prose-bold: #e0e0e0;
-      --tw-prose-counters: #9ddff0;
-      --tw-prose-bullets: #404040;
-      --tw-prose-hr: rgba(139, 233, 255, 0.12);
-      --tw-prose-quotes: #b29cff;
-      --tw-prose-quote-borders: rgba(143, 103, 255, 0.24);
-      --tw-prose-captions: #808080;
-      --tw-prose-code: #9ddff0;
-      --tw-prose-pre-code: #d0d0d0;
-      --tw-prose-pre-bg: rgba(10, 14, 39, 0.95);
-      --tw-prose-th-borders: rgba(139, 233, 255, 0.2);
-      --tw-prose-td-borders: rgba(139, 233, 255, 0.12);
-    }
+		<div class="mt-20 grid gap-16 xl:grid-cols-[minmax(0,1fr)_15rem]">
+			<div class="prose prose-lg prose-site xl:max-w-3xl">
+				<Content />
+			</div>
 
-    .prose h2 {
-      margin-top: 2.5rem;
-      margin-bottom: 1.25rem;
-      color: #c7d2fe;
-      text-shadow: 0 0 10px rgba(139, 233, 255, 0.08);
-    }
-
-    .prose h3 {
-      margin-top: 1.75rem;
-      margin-bottom: 0.875rem;
-      color: #b29cff;
-    }
-
-    .prose video {
-      border-radius: 12px;
-      margin: 2rem 0;
-      border: 1px solid rgba(139, 233, 255, 0.18);
-      box-shadow: 0 0 18px rgba(139, 233, 255, 0.08);
-      transition: all 0.3s ease;
-    }
-
-    .prose video:hover {
-      box-shadow: 0 0 24px rgba(139, 233, 255, 0.14);
-      border-color: rgba(139, 233, 255, 0.36);
-    }
-
-    .prose table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 1.5rem 0;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(139, 233, 255, 0.14);
-    }
-
-    .prose th {
-      background: linear-gradient(135deg, rgba(139, 233, 255, 0.1) 0%, rgba(143, 103, 255, 0.1) 100%);
-      color: #c9f6ff;
-      padding: 1rem;
-      font-weight: 700;
-      border-bottom: 2px solid rgba(139, 233, 255, 0.16);
-    }
-
-    .prose td {
-      padding: 1rem;
-      border-bottom: 1px solid rgba(139, 233, 255, 0.1);
-    }
-
-    .prose tr:hover {
-      background-color: rgba(139, 233, 255, 0.04);
-    }
-
-    .prose hr {
-      border: none;
-      height: 2px;
-      background: linear-gradient(to right, transparent, rgba(139, 233, 255, 0.22), transparent);
-      margin: 3rem 0;
-    }
-
-    .prose a {
-      color: #9ddff0;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      display: inline-block;
-    }
-
-    .prose a:hover {
-      color: #c9f6ff;
-      border-bottom-color: #9ddff0;
-      text-shadow: 0 0 8px rgba(139, 233, 255, 0.16);
-    }
-
-    .prose strong {
-      color: #e0e0e0;
-      font-weight: 700;
-    }
-
-    .prose code {
-      background-color: rgba(10, 14, 39, 0.8);
-      color: #9ddff0;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.95em;
-      border: 1px solid rgba(139, 233, 255, 0.12);
-    }
-
-    .prose pre {
-      background: linear-gradient(135deg, rgba(10, 14, 39, 0.95) 0%, rgba(15, 22, 41, 0.95) 100%);
-      border-radius: 8px;
-      padding: 1.5rem;
-      overflow-x: auto;
-      border: 1px solid rgba(139, 233, 255, 0.12);
-      box-shadow: inset 0 0 20px rgba(139, 233, 255, 0.04);
-    }
-
-    .prose pre code {
-      background: none;
-      color: #d0d0d0;
-      padding: 0;
-      border: none;
-    }
-
-    .prose ul, .prose ol {
-      margin: 1rem 0;
-      color: #d0d0d0;
-    }
-
-    .prose li {
-      margin: 0.5rem 0;
-      line-height: 1.8;
-    }
-
-    .prose blockquote {
-      border-left: 4px solid #8f67ff;
-      color: #b0b0b0;
-      background: rgba(143, 103, 255, 0.05);
-      padding-left: 1.5rem;
-      margin-left: 0;
-    }
-  </style>
+			{
+				toc.length > 0 && (
+					<aside class="hidden xl:block">
+						<nav class="toc" aria-label="On this page">
+							<p class="toc__title">On this page</p>
+							<ul>
+								{toc.map((heading) => (
+									<li>
+										<a href={`#${heading.slug}`} data-toc-link>
+											{heading.text}
+										</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					</aside>
+				)
+			}
+		</div>
+	</article>
 </Layout>
 
 <style>
-	.cyber-project-badge {
-		display: inline-block;
-		padding: 0.6rem 1.2rem;
-    background: linear-gradient(135deg, rgba(139, 233, 255, 0.1) 0%, rgba(143, 103, 255, 0.08) 100%);
-    border: 1px solid rgba(139, 233, 255, 0.22);
-		border-radius: 6px;
-    color: #c9f6ff;
-		font-size: 0.875rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		transition: all 0.3s ease;
+	.progress {
+		position: fixed;
+		inset: 0 0 auto 0;
+		z-index: 60;
+		height: 3px;
+		transform-origin: 0 50%;
+		transform: scaleX(var(--progress, 0));
+		background: linear-gradient(90deg, var(--accent), var(--accent-2));
+		pointer-events: none;
 	}
 
-	.cyber-project-badge:hover {
-    background: linear-gradient(135deg, rgba(139, 233, 255, 0.14) 0%, rgba(143, 103, 255, 0.1) 100%);
-    border-color: rgba(139, 233, 255, 0.48);
-    box-shadow: 0 0 14px rgba(139, 233, 255, 0.14);
-	}
-
-	.cyber-project-btn {
+	.back {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-    padding: 0.55rem 1rem;
-    background: linear-gradient(135deg, rgba(139, 233, 255, 0.08) 0%, rgba(143, 103, 255, 0.06) 100%);
-    border: 1px solid rgba(139, 233, 255, 0.22);
-		border-radius: 6px;
-    color: #c9f6ff;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		text-decoration: none;
-		transition: all 0.3s ease;
-		cursor: pointer;
+		font-size: 0.95rem;
+		font-weight: 500;
+		color: var(--muted);
+		transition: color 0.3s;
 	}
 
-	.cyber-project-btn:hover {
-    background: linear-gradient(135deg, rgba(139, 233, 255, 0.14) 0%, rgba(143, 103, 255, 0.1) 100%);
-    border-color: rgba(139, 233, 255, 0.48);
-    box-shadow: 0 0 14px rgba(139, 233, 255, 0.14);
-		transform: translateY(-2px);
+	.back:hover {
+		color: var(--fg);
+	}
+
+	.back__icon {
+		transition: transform 0.45s var(--ease);
+	}
+
+	.back:hover .back__icon {
+		transform: translateX(-4px);
+	}
+
+	.toc {
+		position: sticky;
+		top: 7rem;
+	}
+
+	.toc__title {
+		margin-bottom: 1rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--fg);
+	}
+
+	.toc ul {
+		display: flex;
+		flex-direction: column;
+		border-left: 1px solid var(--line);
+	}
+
+	.toc a {
+		position: relative;
+		display: block;
+		padding: 0.4rem 0 0.4rem 1rem;
+		font-size: 0.9rem;
+		line-height: 1.35;
+		color: var(--muted);
+		transition: color 0.3s;
+	}
+
+	.toc a::before {
+		content: '';
+		position: absolute;
+		left: -1px;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--accent);
+		transform: scaleY(0);
+		transition: transform 0.45s var(--ease);
+	}
+
+	.toc a:hover,
+	.toc a[aria-current='true'] {
+		color: var(--fg);
+	}
+
+	.toc a[aria-current='true']::before {
+		transform: scaleY(1);
 	}
 </style>
-
-

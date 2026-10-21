@@ -1,7 +1,7 @@
 import { z, defineCollection } from 'astro:content';
 
-// Schema para la colección `projects`.
-// Ajusta/expande campos según necesites.
+// Schema for the `projects` collection.
+// Adjust or extend the fields as needed.
 const projectSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -10,6 +10,8 @@ const projectSchema = z.object({
   technologies: z.array(z.string()).optional(),
   github: z.string().optional(),
   external: z.string().optional(),
+  // Cover video or image (path inside /public)
+  cover: z.string().optional(),
 });
 
 export const collections = {

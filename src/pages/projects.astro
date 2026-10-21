@@ -1,110 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects } from '../lib/projects';
 
-const projects = await getCollection('projects');
-// Orden simple por fecha si existe
-projects.sort((a, b) => (b.data.date || '').localeCompare(a.data.date || ''));
+const projects = await getProjects();
 ---
 
-<Layout>
-	<section class="container mx-auto py-20 px-4 relative z-10">
-		<div class="mb-16">
-			<h1 class="text-5xl md:text-6xl font-black mb-4 text-slate-100">
-				// PROYECTOS
-			</h1>
-			<p class="text-xl text-slate-400 max-w-2xl">
-				Explora mis trabajos destacados. Soluciones full-stack desde backend robusto hasta interfaces modernas.
-			</p>
-			<div class="h-1 w-24 bg-gradient-to-r from-cyan-300/70 to-transparent mt-4"></div>
-		</div>
+<Layout
+	title="Projects — Miguel Duran"
+	description="Full-stack development projects by Miguel Duran: complete applications with backend, database and interface."
+>
+	<section class="mx-auto max-w-6xl px-6 pb-28 pt-36">
+		<h1 class="display-lg rise">Projects</h1>
+		<p class="lead rise mt-6" style="--d: 120ms">
+			A selection of my work: complete applications with backend, database and interface.
+		</p>
 
-		<div class="grid md:grid-cols-2 gap-8">
-			{projects.map(project => (
-				<a href={`/projects/${project.slug}`} class="group">
-					<div class="project-card glass-card relative">
-						<!-- Border Glow -->
-						<div class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-cyan-400/10 to-purple-400/10 pointer-events-none"></div>
-
-						<div class="relative z-10 p-6 flex flex-col h-full">
-							<div class="flex-1">
-								<h2 class="text-2xl font-bold text-slate-100 group-hover:text-cyan-200 transition-colors mb-3">
-									{project.data.title}
-								</h2>
-								<p class="text-slate-400 text-base leading-relaxed mb-4">
-									{project.data.description}
-								</p>
-							</div>
-
-							{project.data.technologies && (
-								<div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-cyan-300/15">
-									{project.data.technologies.slice(0, 4).map(tech => (
-										<span class="cyber-tech-badge">
-											{tech}
-										</span>
-									))}
-									{project.data.technologies.length > 4 && (
-										<span class="cyber-tech-badge muted">
-											+{project.data.technologies.length - 4}
-										</span>
-									)}
-								</div>
-							)}
-
-							<div class="flex items-center gap-2 mt-6 text-cyan-200 font-semibold group-hover:gap-3 transition-all">
-								VER PROYECTO
-								<span>→</span>
-							</div>
-						</div>
-					</div>
-				</a>
-			))}
-		</div>
+		{
+			projects.length > 0 ? (
+				<ul class="mt-14 grid gap-8">
+					{projects.map((project, index) => (
+						<li class="rise" style={`--d: ${240 + index * 120}ms`}>
+							<ProjectCard project={project} />
+						</li>
+					))}
+				</ul>
+			) : (
+				<p class="mt-14 text-soft">No projects published yet.</p>
+			)
+		}
 	</section>
 </Layout>
-
-<style>
-	.project-card {
-		border: 1px solid rgba(139, 233, 255, 0.18);
-		border-radius: 12px;
-		transform: translateY(0);
-		transition: all 0.3s ease;
-	}
-
-	.project-card:hover {
-		transform: translateY(-8px);
-		border-color: rgba(139, 233, 255, 0.34);
-		box-shadow: 0 0 24px rgba(139, 233, 255, 0.1), 0 10px 40px rgba(0, 0, 0, 0.28);
-	}
-
-	.cyber-tech-badge {
-		display: inline-block;
-		padding: 0.4rem 0.8rem;
-		background: rgba(139, 233, 255, 0.08);
-		border: 1px solid rgba(139, 233, 255, 0.22);
-		border-radius: 6px;
-		color: #c9f6ff;
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		transition: all 0.3s ease;
-	}
-
-	.cyber-tech-badge:hover {
-		background: rgba(139, 233, 255, 0.14);
-		border-color: rgba(139, 233, 255, 0.36);
-		box-shadow: 0 0 10px rgba(139, 233, 255, 0.12);
-	}
-
-	.cyber-tech-badge.muted {
-		background: rgba(100, 100, 100, 0.1);
-		border-color: rgba(100, 100, 100, 0.3);
-		color: #808080;
-	}
-
-	a:hover .project-card {
-		transform: translateY(-8px);
-	}
-</style>
-
