@@ -13,6 +13,8 @@ technologies:
   - PrimeVue
   - JWT
 cover: "/projects/poustfit/home.webp"
+logo: "/logos/poustfit.webp"
+logoBackground: "#f2b632"
 github: "https://github.com/MiguelDuranAltes/Poustfit"
 draft: false
 ---

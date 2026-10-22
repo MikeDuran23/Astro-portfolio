@@ -1,7 +1,9 @@
 ---
 title: "The Gamer's Place"
 description: "A full-stack web application built as my Bachelor's Thesis. It helps users keep track of the games they have played, discover new titles through a personalized recommendation system, and manage their personal gaming library."
-date: "2026-07-03"
+date: "2025-07-01"
+logo: "/logos/tgp.webp"
+logoBackground: "#201624"
 cover: "/home.mp4"
 technologies:
   - Vue.js

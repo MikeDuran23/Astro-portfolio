@@ -12,6 +12,10 @@ const projectSchema = z.object({
   external: z.string().optional(),
   // Cover video or image (path inside /public)
   cover: z.string().optional(),
+  // Logo shown on the project card (path inside /public), with the background it sits on
+  logo: z.string().optional(),
+  logoBackground: z.string().optional(),
+  logoPixelated: z.boolean().optional(),
 });
 
 export const collections = {

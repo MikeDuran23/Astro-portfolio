@@ -3,6 +3,9 @@ title: "Nebula"
 description: "A personal project I built to solve a real need of my own: a private place to keep my photos and videos, on my own hardware instead of the cloud. An iPhone and Android app built with Expo talks to a FastAPI and PostgreSQL server at home, with every photo backed up to a second computer. Building it taught me more than any course."
 date: "2026-10-21"
 cover: "/projects/nebula/cover.mp4"
+logo: "/logos/nebula.webp"
+logoBackground: "#241046"
+logoPixelated: true
 technologies:
   - React Native
   - Expo
