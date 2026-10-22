@@ -16,8 +16,13 @@ const t = useTranslations(lang);
 const { title = t.meta.title, description = t.meta.description } = Astro.props;
 
 // The same page in each language, for search engines
-const enUrl = new URL(switchPath(Astro.url.pathname, 'en'), Astro.url);
-const esUrl = new URL(switchPath(Astro.url.pathname, 'es'), Astro.url);
+// (absolute only when `site` is set in astro.config; otherwise a plain path, never localhost)
+const alternate = (to: 'en' | 'es') => {
+	const path = switchPath(Astro.url.pathname, to);
+	return Astro.site ? new URL(path, Astro.site).href : path;
+};
+const enUrl = alternate('en');
+const esUrl = alternate('es');
 ---
 
 <!doctype html>

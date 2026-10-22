@@ -141,7 +141,8 @@ document.addEventListener('keydown', (event) => {
 function syncLanguageLink() {
 	const link = document.querySelector<HTMLAnchorElement>('[data-lang-switch]');
 	const alternate = link && document.head.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${link.lang}"]`);
-	if (link && alternate) link.href = alternate.href;
+	// Only the path: the absolute URL may carry another origin (e.g. localhost from the build)
+	if (link && alternate) link.href = new URL(alternate.href, location.origin).pathname;
 }
 
 window.addEventListener('resize', placePill);
