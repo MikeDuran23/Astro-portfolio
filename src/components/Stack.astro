@@ -1,16 +1,19 @@
 ---
 import { site } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.url));
 ---
 
 <section class="mx-auto max-w-6xl px-6 py-24 md:py-32" aria-labelledby="stack-title">
-	<h2 id="stack-title" class="display-md max-w-xl">What I build with</h2>
-	<p class="mt-4 max-w-xl text-soft">The tools I use in my projects, from backend to interface.</p>
+	<h2 id="stack-title" class="display-md max-w-xl">{t.stack.title}</h2>
+	<p class="mt-4 max-w-xl text-soft">{t.stack.lead}</p>
 
 	<div class="stack mt-14 grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
 		{
 			site.stack.map((group) => (
 				<div class="stack__group">
-					<h3 class="text-sm font-medium text-muted">{group.title}</h3>
+					<h3 class="text-sm font-medium text-muted">{t.stack.groups[group.title] ?? group.title}</h3>
 					<ul class="mt-4 space-y-2">
 						{group.items.map((item) => (
 							<li class="stack__item">{item}</li>

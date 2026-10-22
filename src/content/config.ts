@@ -1,6 +1,6 @@
 import { z, defineCollection } from 'astro:content';
 
-// Schema for the `projects` collection.
+// Schema for the `projects` collection (English, with all the project data).
 // Adjust or extend the fields as needed.
 const projectSchema = z.object({
   title: z.string(),
@@ -18,7 +18,14 @@ const projectSchema = z.object({
   logoPixelated: z.boolean().optional(),
 });
 
+// Spanish version of a project: same file name as the English one, only the texts change.
+// Date, logo, technologies and links are taken from the English entry.
+const translationSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
+
 export const collections = {
   projects: defineCollection({ schema: projectSchema }),
+  'projects-es': defineCollection({ schema: translationSchema }),
 };
-

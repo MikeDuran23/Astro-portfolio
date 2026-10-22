@@ -1,22 +1,37 @@
 ---
 import { site } from '../data/site';
+import { getLang, localePath, useTranslations } from '../i18n/ui';
+
+const lang = getLang(Astro.url);
+const t = useTranslations(lang);
 const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-line">
 	<div class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
-		<p class="text-sm text-muted">© {year} {site.name}. Built with Astro.</p>
-		<nav class="flex gap-6 text-sm" aria-label="Footer">
+		<p class="text-sm text-muted">© {year} {site.name}. {t.footer.built}</p>
+		<nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label={t.footerNav}>
 			{
 				site.nav.map((item) => (
-					<a href={item.href} class="text-soft transition-colors hover:text-fg">
-						{item.label}
+					<a href={localePath(lang, item.href)} class="text-soft transition-colors hover:text-fg">
+						{t.nav[item.key]}
 					</a>
 				))
 			}
-			<a href={site.github} class="text-soft transition-colors hover:text-fg" target="_blank" rel="noopener noreferrer">
-				GitHub
-			</a>
+			{
+				site.githubAccounts.map((account) => (
+					<a href={account.url} class="text-soft transition-colors hover:text-fg" target="_blank" rel="noopener noreferrer">
+						GitHub @{account.handle}
+					</a>
+				))
+			}
+			{
+				site.linkedin && (
+					<a href={site.linkedin} class="text-soft transition-colors hover:text-fg" target="_blank" rel="noopener noreferrer">
+						LinkedIn
+					</a>
+				)
+			}
 		</nav>
 	</div>
 </footer>

@@ -4,20 +4,24 @@ import { ViewTransitions } from 'astro:transitions';
 import Aurora from '../components/Aurora.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getLang, switchPath, useTranslations } from '../i18n/ui';
 
 interface Props {
 	title?: string;
 	description?: string;
 }
 
-const {
-	title = 'Miguel Duran — Full-stack Computer Engineer',
-	description = 'Portfolio of Miguel Duran, computer engineer. Complete web applications, from backend to interface.',
-} = Astro.props;
+const lang = getLang(Astro.url);
+const t = useTranslations(lang);
+const { title = t.meta.title, description = t.meta.description } = Astro.props;
+
+// The same page in each language, for search engines
+const enUrl = new URL(switchPath(Astro.url.pathname, 'en'), Astro.url);
+const esUrl = new URL(switchPath(Astro.url.pathname, 'es'), Astro.url);
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang={lang} data-theme="dark">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,6 +39,9 @@ const {
 
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="alternate" hreflang="en" href={enUrl} />
+		<link rel="alternate" hreflang="es" href={esUrl} />
+		<link rel="alternate" hreflang="x-default" href={enUrl} />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
@@ -56,7 +63,7 @@ const {
 		<ViewTransitions />
 	</head>
 	<body>
-		<a href="#main" class="skip-link">Skip to content</a>
+		<a href="#main" class="skip-link">{t.skip}</a>
 		<Aurora />
 		<Header />
 		<main id="main">

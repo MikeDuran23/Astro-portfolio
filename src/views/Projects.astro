@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects } from '../lib/projects';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const lang = getLang(Astro.url);
+const t = useTranslations(lang);
+const projects = await getProjects(lang);
+---
+
+<Layout title={t.meta.projectsTitle} description={t.meta.projectsDescription}>
+	<section class="mx-auto max-w-6xl px-6 pb-28 pt-36">
+		<h1 class="display-lg rise">{t.projects.title}</h1>
+		<p class="lead rise mt-6" style="--d: 120ms">
+			{t.projects.lead}
+		</p>
+
+		{
+			projects.length > 0 ? (
+				<ul class="mt-14 grid gap-8">
+					{projects.map((project, index) => (
+						<li class="rise" style={`--d: ${240 + index * 120}ms`}>
+							<ProjectCard project={project} />
+						</li>
+					))}
+				</ul>
+			) : (
+				<p class="mt-14 text-soft">{t.projects.empty}</p>
+			)
+		}
+	</section>
+</Layout>

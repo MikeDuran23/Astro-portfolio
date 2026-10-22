@@ -58,10 +58,11 @@ function normalise(pathname: string) {
 	return pathname.replace(/\/$/, '') || '/';
 }
 
-function isCurrent(href: string) {
+function isCurrent(link: HTMLAnchorElement) {
 	const path = normalise(location.pathname);
-	const target = normalise(new URL(href, location.origin).pathname);
-	return target === '/' ? path === '/' : path === target || path.startsWith(target + '/');
+	const target = normalise(new URL(link.href, location.origin).pathname);
+	// Home links (data-exact) only match their own page
+	return 'exact' in link.dataset ? path === target : path === target || path.startsWith(target + '/');
 }
 
 function placePill() {
@@ -82,7 +83,7 @@ function placePill() {
 
 function syncNav() {
 	document.querySelectorAll<HTMLAnchorElement>('[data-nav-link], [data-menu-link]').forEach((link) => {
-		if (isCurrent(link.href)) link.setAttribute('aria-current', 'page');
+		if (isCurrent(link)) link.setAttribute('aria-current', 'page');
 		else link.removeAttribute('aria-current');
 	});
 	placePill();
@@ -94,7 +95,7 @@ function setMenu(open: boolean) {
 	if (!header || !button) return;
 	header.toggleAttribute('data-open', open);
 	button.setAttribute('aria-expanded', String(open));
-	button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+	button.setAttribute('aria-label', (open ? button.dataset.labelClose : button.dataset.labelOpen) ?? '');
 }
 
 document.addEventListener('click', (event) => {
@@ -107,9 +108,41 @@ document.addEventListener('click', (event) => {
 	}
 });
 
-document.addEventListener('keydown', (event) => {
-	if (event.key === 'Escape') setMenu(false);
+/* ------------------------------------------------ GitHub accounts */
+
+function setGithub(open: boolean) {
+	const box = document.querySelector<HTMLElement>('[data-gh]');
+	if (!box) return;
+	box.toggleAttribute('data-open', open);
+	box.querySelector('[data-gh-button]')?.setAttribute('aria-expanded', String(open));
+}
+
+document.addEventListener('click', (event) => {
+	const target = event.target as HTMLElement;
+	if (target.closest('[data-gh-button]')) {
+		const box = document.querySelector<HTMLElement>('[data-gh]');
+		setGithub(!box?.hasAttribute('data-open'));
+	} else if (!target.closest('[data-gh-panel]')) {
+		setGithub(false);
+	}
 });
+
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'Escape') {
+		setMenu(false);
+		setGithub(false);
+	}
+});
+
+/* ---------------------------------------------- Language switch */
+
+// The header stays alive between pages, so its language link is pointed at the
+// translation of whichever page is showing now (listed in <link rel="alternate">).
+function syncLanguageLink() {
+	const link = document.querySelector<HTMLAnchorElement>('[data-lang-switch]');
+	const alternate = link && document.head.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${link.lang}"]`);
+	if (link && alternate) link.href = alternate.href;
+}
 
 window.addEventListener('resize', placePill);
 document.fonts?.ready.then(placePill);
@@ -228,6 +261,8 @@ function initCardVideos() {
 
 document.addEventListener('astro:page-load', () => {
 	setMenu(false);
+	setGithub(false);
+	syncLanguageLink();
 	syncNav();
 	onScroll();
 	initToc();

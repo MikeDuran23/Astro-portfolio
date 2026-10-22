@@ -1,33 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import { getProjects } from '../lib/projects';
-
-const projects = await getProjects();
+import Projects from '../views/Projects.astro';
 ---
 
-<Layout
-	title="Projects — Miguel Duran"
-	description="Full-stack development projects by Miguel Duran: complete applications with backend, database and interface."
->
-	<section class="mx-auto max-w-6xl px-6 pb-28 pt-36">
-		<h1 class="display-lg rise">Projects</h1>
-		<p class="lead rise mt-6" style="--d: 120ms">
-			A selection of my work: complete applications with backend, database and interface.
-		</p>
-
-		{
-			projects.length > 0 ? (
-				<ul class="mt-14 grid gap-8">
-					{projects.map((project, index) => (
-						<li class="rise" style={`--d: ${240 + index * 120}ms`}>
-							<ProjectCard project={project} />
-						</li>
-					))}
-				</ul>
-			) : (
-				<p class="mt-14 text-soft">No projects published yet.</p>
-			)
-		}
-	</section>
-</Layout>
+<Projects />

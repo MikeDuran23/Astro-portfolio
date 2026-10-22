@@ -1,41 +1,54 @@
 ---
 import { site } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.url));
 
 const hasEmail = site.email.length > 0;
 ---
 
 <section class="mx-auto max-w-6xl px-6 pb-28 pt-8" aria-labelledby="contact-title">
 	<div class="contact" data-spotlight>
-		<h2 id="contact-title" class="display-lg max-w-2xl">Open to new opportunities.</h2>
+		<h2 id="contact-title" class="display-lg max-w-2xl">{t.contact.title}</h2>
 		<p class="lead mt-5">
-			If you like my work or want to collaborate, you can browse my code on GitHub{hasEmail ? ' or write to me directly' : ''}.
+			{t.contact.lead}{hasEmail ? t.contact.leadEmail : ''}.
 		</p>
 
 		<div class="mt-8 flex flex-wrap gap-3">
 			{
 				hasEmail && (
 					<a href={`mailto:${site.email}`} class="btn btn-primary">
-						Get in touch
+						{t.contact.getInTouch}
 						<svg class="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M5 12h14M13 6l6 6-6 6"></path>
 						</svg>
 					</a>
 				)
 			}
-			<a href={site.github} class:list={['btn', hasEmail ? 'btn-ghost' : 'btn-primary']} target="_blank" rel="noopener noreferrer">
-				GitHub
-				<svg class="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-					<path d="M5 12h14M13 6l6 6-6 6"></path>
-				</svg>
-			</a>
+			{
+				site.githubAccounts.map((account, index) => (
+					<a
+						href={account.url}
+						class:list={['btn', !hasEmail && index === 0 ? 'btn-primary' : 'btn-ghost']}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						GitHub · {account.handle}
+						<svg class="btn-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M5 12h14M13 6l6 6-6 6"></path>
+						</svg>
+					</a>
+				))
+			}
 			{
 				site.linkedin && (
 					<a href={site.linkedin} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-						LinkedIn
+						{t.contact.linkedin}
 					</a>
 				)
 			}
 		</div>
+		<p class="mt-6 text-sm text-muted">{t.contact.accounts}</p>
 	</div>
 </section>
 

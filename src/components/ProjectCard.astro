@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { formatMonthYear, getLang, localePath, useTranslations } from '../i18n/ui';
 
 interface Props {
 	project: CollectionEntry<'projects'>;
@@ -8,10 +9,10 @@ interface Props {
 const { project } = Astro.props;
 const { title, description, technologies = [], cover, date, logo, logoBackground, logoPixelated } = project.data;
 
-const when = date
-	? new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' })
-	: null;
-const href = `/projects/${project.slug}`;
+const lang = getLang(Astro.url);
+const t = useTranslations(lang);
+const when = date ? formatMonthYear(date, lang) : null;
+const href = localePath(lang, `/projects/${project.slug}`);
 const visible = technologies.slice(0, 5);
 const extra = technologies.length - visible.length;
 const isVideo = !!cover && /\.(mp4|webm)$/i.test(cover);
@@ -22,7 +23,7 @@ const isVideo = !!cover && /\.(mp4|webm)$/i.test(cover);
 		{
 			logo && (
 				<div class="card__logo" style={logoBackground ? `background:${logoBackground}` : undefined}>
-					<img src={logo} alt={`${title} logo`} class:list={{ pixelated: logoPixelated }} loading="lazy" />
+					<img src={logo} alt={`${title} ${t.card.logo}`} class:list={{ pixelated: logoPixelated }} loading="lazy" />
 				</div>
 			)
 		}
@@ -57,7 +58,7 @@ const isVideo = !!cover && /\.(mp4|webm)$/i.test(cover);
 		<div>
 			{
 				visible.length > 0 && (
-					<ul class="flex flex-wrap gap-2" aria-label="Technologies">
+					<ul class="flex flex-wrap gap-2" aria-label={t.card.technologies}>
 						{visible.map((tech) => (
 							<li class="chip">{tech}</li>
 						))}
@@ -66,7 +67,7 @@ const isVideo = !!cover && /\.(mp4|webm)$/i.test(cover);
 				)
 			}
 			<span class="link-arrow mt-6">
-				View project
+				{t.card.view}
 				<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M5 12h14M13 6l6 6-6 6"></path>
 				</svg>
